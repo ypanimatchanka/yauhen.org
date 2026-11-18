@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% import "partials/blocks.html" as b with context %}
+{% block body_class %}page{% endblock %}
+{% block main %}
+<header class="page-hero{% if page.cover %} has-cover{% endif %}">
+  <div class="hero-backdrop" aria-hidden="true">{% if page.cover %}<img src="{{ page.thumbs.get(720) or page.cover }}" alt="">{% endif %}</div>
+  <div class="container page-hero-inner">
+    <div>
+      {{ b.crumbs_nav(crumbs, page.title) }}
+      {% if page.meta.get("eyebrow") %}<p class="eyebrow">{{ page.meta.eyebrow }}</p>{% endif %}
+      <h1 class="page-title">{{ page.title }}</h1>
+      {% if page.meta.get("tagline") %}<p class="release-lead">{{ page.meta.tagline }}</p>{% endif %}
+    </div>
+    {% if page.cover %}<div class="page-cover page-cover-wide">{{ b.art(page, size="hero", eager=true) }}</div>{% endif %}
+  </div>
+</header>
+<div class="container release-body">
+  <article class="prose">{{ page.content }}</article>
+</div>
+{% if page.url == "/lullasoono/" and produced %}
+<section class="section container">
+  <header class="section-head"><h2 class="section-title">LullaSoono releases</h2></header>
+  {{ b.grid(produced, vt=true) }}
+</section>
+{% endif %}
+{% if page.url == "/producing/" and produced %}
+<section class="section container">
+  <header class="section-head"><h2 class="section-title">Produced under the YAUHEN.ORG label</h2><a class="section-more" href="/lullasoono/">LullaSoono {{ icon("arrow-right") }}</a></header>
+  {{ b.grid(produced, vt=true) }}
+</section>
+{% endif %}
+{% endblock %}

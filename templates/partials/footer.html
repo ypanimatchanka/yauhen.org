@@ -1,0 +1,29 @@
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">YP</span><span class="brand-name">{{ site.artist }}</span></a>
+      <p class="footer-tagline">{{ site.tagline }}</p>
+      <a class="footer-mail" href="mailto:{{ site.email }}">{{ site.email }}</a>
+    </div>
+    <nav class="footer-listen" aria-label="Listen on">
+      <p class="footer-title">Listen on</p>
+      <ul>
+        {% for s in site.social %}
+        <li><a href="{{ s.url }}" target="_blank" rel="noopener">{{ icon(s.icon) }}<span>{{ s.name }}</span></a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+    <nav class="footer-nav" aria-label="Footer">
+      <p class="footer-title">Explore</p>
+      <ul>
+        {% for item in site.menu %}<li><a href="{{ item.url }}">{{ item.title }}</a></li>{% endfor %}
+        <li><a href="/lullasoono/">LullaSoono</a></li>
+        <li><a href="/search/">Search lyrics</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="container footer-bottom">
+    <p>© 2019–{{ build_year }} {{ site.artist }}</p>
+    <p><a href="/privacy-policy/">Privacy Policy</a>{% if site_url %} · <a href="/feed.xml">RSS</a>{% endif %}</p>
+  </div>
+</footer>

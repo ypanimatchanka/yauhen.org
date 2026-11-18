@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% import "partials/blocks.html" as b with context %}
+{% block body_class %}search{% endblock %}
+{% block head %}<script src="/assets/js/search.js" defer></script>{% endblock %}
+{% block main %}
+<header class="page-hero">
+  <div class="container page-hero-inner">
+    <div>
+      <p class="eyebrow">Search</p>
+      <h1 class="page-title">Find a song</h1>
+      <p class="release-lead">Search titles, stories — or type a line you remember from the lyrics.</p>
+    </div>
+  </div>
+</header>
+<section class="section container">
+  <form class="search-form" role="search" action="/search/" method="get">
+    <label class="visually-hidden" for="q">Search</label>
+    <input id="q" class="search-input" type="search" name="q" placeholder="A title or a line from the lyrics…" autocomplete="off">
+    <button class="btn btn-glow" type="submit">{{ icon("search") }} Search</button>
+  </form>
+  <p class="search-status" id="search-status" aria-live="polite"></p>
+  <div class="rgrid" id="search-results" data-index="/search-index.json"></div>
+</section>
+{% endblock %}

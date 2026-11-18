@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% import "partials/blocks.html" as b with context %}
+{% block body_class %}release{% endblock %}
+{% block main %}
+<section class="release-hero">
+  <div class="hero-backdrop" aria-hidden="true">{% if page.cover %}<img src="{{ page.thumbs.get(720) or page.cover }}" alt="">{% endif %}</div>
+  <div class="container release-hero-inner">
+    <div class="release-art">{{ b.art(page, size="hero", vt=true, eager=true) }}</div>
+    <div class="release-info">
+      {{ b.crumbs_nav(crumbs, page.title) }}
+      <p class="eyebrow">{{ page.release or "Album" }}{% if page.year %} · {{ page.year }}{% endif %}{% if page.track_pages %} · {{ page.track_pages | length }} track{{ "s" if page.track_pages | length != 1 }}{% endif %}</p>
+      <h1 class="release-title">{{ page.title }}</h1>
+      <p class="release-by">{% if page.artist %}{{ page.artist }} <span class="muted">· produced by {{ site.artist }}</span>{% else %}{{ site.artist }}{% endif %}</p>
+      {% if page.anthology_page %}<p class="release-chip"><a href="{{ page.anthology_page.url }}">{{ icon("layers") }} Part of the {{ page.anthology_page.title }} anthology</a></p>{% endif %}
+      <div class="release-actions">
+        {% if '<div class="embed' in page.content %}<button class="btn btn-glow" type="button" data-play>{{ icon("play") }} Play</button>{% endif %}
+        {{ b.listen(page.listen) }}
+      </div>
+    </div>
+  </div>
+</section>
+
+{{ b.title_marquee(page.title) }}
+
+<div class="container release-body{% if page.track_pages or page.anthology_page %} has-aside{% endif %}">
+  <article class="prose" data-cover="{{ page.thumbs.get(720) or page.cover or '' }}">
+    {{ page.content }}
+  </article>
+  {% if page.track_pages or page.anthology_page %}
+  <aside class="release-aside">
+    {% if page.track_pages %}
+    <section class="panel">
+      <h2 class="panel-title">{{ icon("disc") }} Tracklist</h2>
+      <ol class="tracklist">
+        {% for t in page.track_pages %}
+        <li><a href="{{ t.url }}"><span class="tl-n">{{ loop.index }}</span><span class="tl-t">{{ t.title }}</span>{% if t.lyrics %}<span class="tl-lyrics" title="Lyrics">{{ icon("mic") }}</span>{% endif %}</a></li>
+        {% endfor %}
+      </ol>
+    </section>
+    {% endif %}
+    {% if page.anthology_page %}
+    {% set a = page.anthology_page %}
+    <section class="panel">
+      <h2 class="panel-title">{{ icon("layers") }} {{ a.title }} anthology</h2>
+      <ol class="chapters">
+        {% for r in a.release_pages %}
+        <li{% if r is sameas page %} aria-current="true"{% endif %}><a href="{{ r.url }}"><span class="ch-art">{{ b.art(r) }}</span><span><small>Chapter {{ loop.index }}</small>{{ r.title }}</span></a></li>
+        {% endfor %}
+      </ol>
+      <a class="panel-more" href="{{ a.url }}">About {{ a.title }} {{ icon("arrow-right") }}</a>
+    </section>
+    {% endif %}
+  </aside>
+  {% endif %}
+</div>
+
+{% if page.track_pages %}
+<section class="section container" data-reveal>
+  <header class="section-head"><h2 class="section-title">Songs from {{ page.title }}</h2></header>
+  <div class="rgrid rgrid-songs">{% for t in page.track_pages %}{{ b.card(t) }}{% endfor %}</div>
+</section>
+{% endif %}
+
+<div class="container">{{ b.prev_next(prev_page, next_page, "release") }}</div>
+{% include "partials/tags.html" %}
+{% endblock %}

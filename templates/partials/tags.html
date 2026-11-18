@@ -1,0 +1,12 @@
+{% if page.tag_items or page.category_items %}
+<footer class="container page-meta">
+  {% if page.tag_items %}
+  <ul class="chips" aria-label="Tags">
+    {% for t in page.tag_items %}<li><a class="chip" href="{{ t.url }}">#{{ t.name }}</a></li>{% endfor %}
+  </ul>
+  {% endif %}
+  {% if page.category_items %}
+  <p class="muted">Filed under {% for c in page.category_items %}<a href="{{ c.url }}">{{ c.name }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</p>
+  {% endif %}
+</footer>
+{% endif %}

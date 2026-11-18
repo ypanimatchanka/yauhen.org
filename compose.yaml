@@ -1,0 +1,29 @@
+# docker compose up dev              -> live preview at http://localhost:8485 (rebuilds on save;
+#                                       DEV_PORT=9000 docker compose up dev to change the port)
+# docker compose run --rm build      -> one-off build into _site/ with link checks
+# docker compose run --rm tools tools/optimize_images.py   -> shrink new images in content/
+services:
+  dev:
+    build: .
+    image: yauhen-site-builder
+    volumes:
+      - .:/site
+    ports:
+      - "127.0.0.1:${DEV_PORT:-8485}:8000"
+    command: python build.py --serve --host 0.0.0.0 --port 8000
+
+  build:
+    image: yauhen-site-builder
+    build: .
+    volumes:
+      - .:/site
+    environment:
+      - SITE_URL
+    command: python build.py --strict
+
+  tools:
+    image: yauhen-site-builder
+    build: .
+    volumes:
+      - .:/site
+    entrypoint: ["python"]

@@ -1,0 +1,109 @@
+{# Reusable building blocks. Import with: {% import "partials/blocks.html" as b with context %} #}
+
+{# Cover image with WebP thumbnails; vt=true gives it a view-transition name (morphs into the release page). #}
+{% macro art(p, size="card", vt=false, cls="", eager=false) -%}
+{%- if p.cover -%}
+<img class="art {{ cls }}" src="{{ p.thumbs.get(720) or p.cover }}"
+     {% if p.thumbs %}srcset="{{ p.thumbs.get(360) }} 360w, {{ p.thumbs.get(720) }} 720w, {{ p.cover }} 1400w"
+     sizes="{{ '(max-width: 640px) 46vw, 300px' if size == 'card' else '(max-width: 900px) 80vw, 460px' }}"{% endif %}
+     alt="{{ p.cover_alt or ('Cover of ' ~ (p.album_page.title if p.cover_inherited and p.album_page else p.title)) }}"
+     {% if vt %}style="view-transition-name: {{ p.vt }}"{% endif %}
+     {% if eager %}fetchpriority="high"{% else %}loading="lazy"{% endif %} decoding="async" width="720" height="720">
+{%- else -%}
+<span class="art art-placeholder {{ cls }}" aria-hidden="true"{% if vt %} style="view-transition-name: {{ p.vt }}"{% endif %}>{{ icon("music") }}</span>
+{%- endif -%}
+{%- endmacro %}
+
+{# Release / song / post card #}
+{% macro card(p, vt=false, show_kind=true) -%}
+{% set th = p.color | theme %}
+<article class="rcard{% if p.type == 'post' %} rcard-post{% endif %}" data-kind="{{ (p.release or p.type) | lower }}"{% if p.artist %} data-produced{% endif %} data-reveal{% if th %} style="--c: {{ th.accent }}; --cg: {{ th.glow }}"{% endif %}>
+  <a class="rcard-link" href="{{ p.url }}">
+    <span class="rcard-art">{{ art(p, vt=vt) }}<span class="rcard-play" aria-hidden="true">{{ icon("arrow-up-right") }}</span></span>
+    <span class="rcard-body">
+      {% if show_kind %}<span class="rcard-kind">{{ p.label }}{% if p.year %} · {{ p.year }}{% endif %}</span>{% endif %}
+      <span class="rcard-title">{{ p.title }}</span>
+      {% if p.artist %}<span class="rcard-sub">{{ p.artist }}</span>
+      {% elif p.type == 'song' and p.album_page %}<span class="rcard-sub">{{ p.album_page.title }}</span>
+      {% elif p.type == 'post' %}<span class="rcard-sub">{{ p.summary | truncate_text(110) }}</span>{% endif %}
+    </span>
+  </a>
+</article>
+{%- endmacro %}
+
+{% macro grid(items, vt=false, cls="") -%}
+<div class="rgrid {{ cls }}">
+  {% for p in items %}{{ card(p, vt=vt) }}{% endfor %}
+</div>
+{%- endmacro %}
+
+{# "Listen on" smart-link buttons #}
+{% macro listen(links, cls="") -%}
+{% if links %}
+<ul class="listen {{ cls }}" aria-label="Listen on">
+  {% for l in links %}
+  {% set pf = platform(l.platform) %}
+  <li><a class="pill{% if loop.first %} pill-primary{% endif %}" href="{{ l.url }}" target="_blank" rel="noopener">{{ icon(pf.icon) }}<span>{{ pf.label }}</span></a></li>
+  {% endfor %}
+</ul>
+{% endif %}
+{%- endmacro %}
+
+{# WordPress-style pagination: 1 2 3 … with prev/next #}
+{% macro pagination(pager, label="Pages") -%}
+{% if pager and pager.total > 1 %}
+<nav class="pager" aria-label="{{ label }}">
+  {% if pager.prev %}<a class="pager-step" href="{{ pager.prev }}" rel="prev">{{ icon("chevron-left") }}<span>Newer</span></a>{% else %}<span class="pager-step is-disabled">{{ icon("chevron-left") }}<span>Newer</span></span>{% endif %}
+  <ol>
+    {% for l in pager.links %}
+    <li>{% if l.n == pager.n %}<span class="pager-num is-current" aria-current="page">{{ l.n }}</span>{% else %}<a class="pager-num" href="{{ l.url }}">{{ l.n }}</a>{% endif %}</li>
+    {% endfor %}
+  </ol>
+  {% if pager.next %}<a class="pager-step" href="{{ pager.next }}" rel="next"><span>Older</span>{{ icon("chevron-right") }}</a>{% else %}<span class="pager-step is-disabled"><span>Older</span>{{ icon("chevron-right") }}</span>{% endif %}
+</nav>
+{% endif %}
+{%- endmacro %}
+
+{# Endless strip of covers (the "running line") #}
+{% macro cover_marquee(items, label="Releases") -%}
+<div class="marquee" aria-label="{{ label }}">
+  {% for pass in [0, 1] %}
+  <ul class="marquee-track"{% if pass %} aria-hidden="true"{% endif %}>
+    {% for p in items %}
+    <li><a href="{{ p.url }}"{% if pass %} tabindex="-1"{% endif %}>{{ art(p, size="card") }}<span>{{ p.title }}</span></a></li>
+    {% endfor %}
+  </ul>
+  {% endfor %}
+</div>
+{%- endmacro %}
+
+{# Big repeating title band (album pages) #}
+{% macro title_marquee(text) -%}
+<div class="title-band" aria-hidden="true">
+  {% for pass in [0, 1] %}
+  <div class="title-band-track">{% for i in range(6) %}<span>{{ text }}</span><i>✦</i>{% endfor %}</div>
+  {% endfor %}
+</div>
+{%- endmacro %}
+
+{# Breadcrumbs #}
+{% macro crumbs_nav(crumbs, current) -%}
+{% if crumbs %}
+<nav class="crumbs" aria-label="Breadcrumb">
+  <ol>
+    {% for c in crumbs %}<li><a href="{{ c.url }}">{{ c.title }}</a></li>{% endfor %}
+    <li aria-current="page">{{ current }}</li>
+  </ol>
+</nav>
+{% endif %}
+{%- endmacro %}
+
+{# Previous / next navigation between releases or tracks #}
+{% macro prev_next(prev, next, what="release") -%}
+{% if prev or next %}
+<nav class="prevnext" aria-label="More {{ what }}s">
+  {% if prev %}<a class="pn pn-prev" href="{{ prev.url }}"><span class="pn-art">{{ art(prev) }}</span><span><small>Previous {{ what }}</small><strong>{{ prev.title }}</strong></span></a>{% else %}<span></span>{% endif %}
+  {% if next %}<a class="pn pn-next" href="{{ next.url }}"><span><small>Next {{ what }}</small><strong>{{ next.title }}</strong></span><span class="pn-art">{{ art(next) }}</span></a>{% endif %}
+</nav>
+{% endif %}
+{%- endmacro %}

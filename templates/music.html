@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% import "partials/blocks.html" as b with context %}
+{% block body_class %}music-hub{% endblock %}
+{% block main %}
+<header class="page-hero">
+  <div class="container page-hero-inner">
+    <div>
+      {{ b.crumbs_nav(crumbs, page.title) }}
+      <p class="eyebrow">Discography · {{ own_albums | length }} releases · {{ songs | length }} songs with lyrics</p>
+      <h1 class="page-title">{{ page.title }}</h1>
+      <p class="release-lead">{{ page.text }}</p>
+    </div>
+  </div>
+</header>
+
+{% if anthologies %}
+<section class="section container">
+  <header class="section-head"><h2 class="section-title">Anthologies</h2><a class="section-more" href="/category/anthologies/">All {{ icon("arrow-right") }}</a></header>
+  <div class="anthology-row">
+    {% for a in anthologies %}
+    {% set th = a.color | theme %}
+    <a class="anthology-card" href="{{ a.url }}" data-reveal{% if th %} style="--c: {{ th.accent }}; --cg: {{ th.glow }}"{% endif %}>
+      <span class="anthology-card-art">{{ b.art(a, vt=true) }}</span>
+      <span class="anthology-card-body"><small>Anthology · {{ a.release_pages | length }} chapters</small><strong>{{ a.title }}</strong><span>{{ a.meta.get("tagline") or a.summary | truncate_text(140) }}</span></span>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="section container" data-filter-scope>
+  <header class="section-head">
+    <h2 class="section-title">Releases</h2>
+    <div class="chips filter-chips" role="group" aria-label="Filter releases">
+      <button class="chip is-on" type="button" data-filter="all">All</button>
+      <button class="chip" type="button" data-filter="album">Albums</button>
+      <button class="chip" type="button" data-filter="ep">EPs</button>
+      <button class="chip" type="button" data-filter="single">Singles</button>
+    </div>
+  </header>
+  {{ b.grid(own_albums, vt=true, cls="rgrid-filterable") }}
+</section>
+
+{% if produced %}
+<section class="section container">
+  <header class="section-head"><h2 class="section-title">Produced · LullaSoono</h2><a class="section-more" href="/lullasoono/">The project {{ icon("arrow-right") }}</a></header>
+  {{ b.grid(produced) }}
+</section>
+{% endif %}
+
+<section class="section container">
+  <header class="section-head"><h2 class="section-title">Songs &amp; lyrics A–Z</h2><a class="section-more" href="/search/">Search a line {{ icon("search") }}</a></header>
+  <ol class="az-list">
+    {% for s in songs %}
+    <li><a href="{{ s.url }}"><span class="az-art">{{ b.art(s) }}</span><span class="az-t"><strong>{{ s.title }}</strong>{% if s.album_page %}<small>{{ s.album_page.title }}</small>{% endif %}</span>{% if s.lyrics %}<span class="tl-lyrics" title="Lyrics">{{ icon("mic") }}</span>{% endif %}</a></li>
+    {% endfor %}
+  </ol>
+</section>
+{% endblock %}

@@ -1,0 +1,65 @@
+# Production = the "release" branch.
+#   push to release      -> build, check links, deploy to GitHub Pages
+#   push to main / PR    -> build and check links only (no deploy)
+# Requires Settings -> Pages -> Build and deployment -> Source: "GitHub Actions".
+name: Build and deploy to GitHub Pages
+
+on:
+  push:
+    branches: [release, main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Gives the public URL of the Pages site (the custom domain from
+      # Settings -> Pages), used only for canonical links and sitemap.xml.
+      - name: Configure Pages
+        id: pages
+        if: github.ref == 'refs/heads/release'
+        uses: actions/configure-pages@v5
+
+      - name: Build site
+        env:
+          # A repository variable SITE_URL overrides the detected address.
+          SITE_URL: ${{ vars.SITE_URL || steps.pages.outputs.base_url }}
+        run: python build.py --strict
+
+      - name: Upload artifact
+        if: github.ref == 'refs/heads/release'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    if: github.ref == 'refs/heads/release'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,31 @@
+{#
+  Consent defaults -> Google consent banner -> Google tag (GA4).
+  Order matters: consent defaults must be set before the Google tag loads.
+#}
+{% set g = site.google | default({}) %}
+{% set pub = (site.adsense.client if site.adsense and site.adsense.client else "") | replace("ca-pub-", "pub-") %}
+{% if g.tag_id or pub %}
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  {% if g.consent_mode %}
+  // EEA, UK and Switzerland: nothing is stored until the visitor accepts in the banner.
+  gtag("consent", "default", {
+    ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied", analytics_storage: "denied",
+    wait_for_update: 500,
+    region: ["AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IS","IE","IT","LV","LI","LT",
+             "LU","MT","NL","NO","PL","PT","RO","SK","SI","ES","SE","GB","CH"]
+  });
+  gtag("consent", "default", {
+    ad_storage: "granted", ad_user_data: "granted", ad_personalization: "granted", analytics_storage: "granted"
+  });
+  {% endif %}
+  gtag("js", new Date());
+  {% if g.tag_id %}gtag("config", "{{ g.tag_id }}");{% endif %}
+</script>
+{% if g.consent_banner and pub %}
+<script async src="https://fundingchoicesmessages.google.com/i/{{ pub }}?ers=1"></script>
+<script>(function(){function s(){if(!window.frames.googlefcPresent){if(document.body){var f=document.createElement("iframe");f.style.cssText="width:0;height:0;border:none;z-index:-1000;left:-1000px;top:-1000px;display:none";f.name="googlefcPresent";document.body.appendChild(f);}else{setTimeout(s,0);}}}s();})();</script>
+{% endif %}
+{% if g.tag_id %}<script async src="https://www.googletagmanager.com/gtag/js?id={{ g.tag_id }}"></script>{% endif %}
+{% endif %}

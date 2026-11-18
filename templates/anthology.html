@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% import "partials/blocks.html" as b with context %}
+{% block body_class %}anthology{% endblock %}
+{% block main %}
+<section class="release-hero anthology-hero">
+  <div class="hero-backdrop" aria-hidden="true">{% if page.cover %}<img src="{{ page.thumbs.get(720) or page.cover }}" alt="">{% endif %}</div>
+  <div class="container release-hero-inner">
+    <div class="release-art release-art-poster">{{ b.art(page, size="hero", vt=true, eager=true) }}</div>
+    <div class="release-info">
+      {{ b.crumbs_nav(crumbs, page.title) }}
+      <p class="eyebrow">Anthology{% if page.release_pages %} · {{ page.release_pages | length }} chapter{{ "s" if page.release_pages | length != 1 }} so far{% endif %}</p>
+      <h1 class="release-title">{{ page.title }}</h1>
+      <p class="release-lead">{{ page.meta.get("tagline") or page.summary }}</p>
+      <div class="release-actions">{{ b.listen(page.listen) }}</div>
+    </div>
+  </div>
+</section>
+
+{% if page.release_pages %}
+<section class="section container chapters-section" aria-label="Chapters">
+  <ol class="chapter-rail">
+    {% for r in page.release_pages %}
+    {% set th = r.color | theme %}
+    <li data-reveal{% if th %} style="--c: {{ th.accent }}; --cg: {{ th.glow }}"{% endif %}>
+      <a href="{{ r.url }}">
+        <span class="chapter-no">{{ "%02d" | format(loop.index) }}</span>
+        <span class="chapter-art">{{ b.art(r, vt=true) }}</span>
+        <span class="chapter-meta"><small>{{ r.label }}{% if r.year %} · {{ r.year }}{% endif %}</small><strong>{{ r.title }}</strong></span>
+      </a>
+    </li>
+    {% endfor %}
+  </ol>
+</section>
+{% endif %}
+
+<div class="container release-body">
+  <article class="prose" data-cover="{{ page.thumbs.get(720) or page.cover or '' }}">{{ page.content }}</article>
+</div>
+<div class="container">{{ b.prev_next(prev_page, next_page, "anthology") }}</div>
+{% endblock %}

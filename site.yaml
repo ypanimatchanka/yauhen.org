@@ -1,0 +1,98 @@
+# Site-wide settings. Links that start with "/" are site paths: the build turns them
+# into relative links, so the domain name is never written here.
+
+artist: Yauhen Panimatchanka
+name: Yauhen Panimatchanka
+title_suffix: " – Yauhen Panimatchanka"   # appended to page titles while the result stays <= 60 chars
+description: >-
+  Composer, songwriter and music producer Yauhen Panimatchanka: albums, singles,
+  lyrics and anthologies, plus the LullaSoono project.
+tagline: Music for emotion and atmosphere
+lang: en
+portrait: /assets/img/yauhen.jpg
+og_image: /assets/img/yauhen.jpg
+author_slug: yauhen
+own_domains: [yauhen.org, www.yauhen.org]
+
+per_page: 10          # archives (/category/…, /tag/…): same as WordPress, keeps /page/N/ URLs
+home:
+  per_page: 12        # album matrix on the home page: /, /page/2/, …
+  matrix_category: releases/music
+
+# WordPress had two "electro-pop" tags; both URLs keep working (alias -> merged tag).
+tag_aliases:
+  electro-pop-2: electro-pop
+
+menu:
+  - title: Home
+    url: /
+  - title: About
+    url: /about/
+  - title: Music
+    url: /music/
+  - title: Songs & Lyrics
+    url: /category/releases/songs/
+  - title: Anthologies
+    url: /category/anthologies/
+  - title: Blog
+    url: /category/blog/
+    children:
+      - title: Life Style
+        url: /category/blog/life-style/
+      - title: Music
+        url: /category/blog/music-blog/
+      - title: News
+        url: /category/news/
+  - title: Producing
+    url: /producing/
+    children:
+      - title: LullaSoono
+        url: /lullasoono/
+
+# Artist profiles: header icons, footer and schema.org "sameAs".
+social:
+  - name: Apple Music
+    url: https://music.apple.com/pl/artist/yauhen-panimatchanka/1530925978
+    icon: apple-music
+  - name: YouTube
+    url: https://www.youtube.com/@YauhenPanimatchanka
+    icon: youtube
+  - name: YouTube Music
+    url: https://music.youtube.com/channel/UCDipXIkgWsLpaGxX2m2U5kg
+    icon: youtube-music
+  - name: Deezer
+    url: https://www.deezer.com/en/artist/192358877
+    icon: deezer
+  - name: Amazon Music
+    url: https://www.amazon.com/music/player/artists/B0BMKMNR2X/yauhen-panimatchanka
+    icon: amazon-music
+  - name: LinkedIn
+    url: https://www.linkedin.com/in/yauhen-panimatchanka/
+    icon: linkedin
+  # Instagram existed on the old site without a link; add it here:
+  # - name: Instagram
+  #   url: https://www.instagram.com/<profile>/
+  #   icon: instagram
+
+# Labels and icons for "listen" buttons (front matter: listen: [{platform, url}])
+platforms:
+  apple: {label: Apple Music, icon: apple-music}
+  youtube_music: {label: YouTube Music, icon: youtube-music}
+  youtube: {label: YouTube, icon: youtube}
+  amazon: {label: Amazon Music, icon: amazon-music}
+  deezer: {label: Deezer, icon: deezer}
+  spotify: {label: Spotify, icon: spotify}
+
+email: info@yauhen.org
+
+# Google Analytics + consent (same Google tag as on the old WordPress site)
+google:
+  tag_id: GT-KT5FPHNP
+  consent_mode: true
+  consent_banner: true
+
+# AdSense: off by default (no ad units). To show ads, add unit IDs like on ilterra.com.
+adsense:
+  client: ca-pub-9800010230612028
+  page_types: [post]
+  slots: {}

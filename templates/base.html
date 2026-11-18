@@ -1,0 +1,53 @@
+<!doctype html>
+{% set is_obj = page.type is defined %}
+{% set description = (page.description if page.description is defined and page.description else site.description) %}
+{% set og_title = (page.seo_title if page.seo_title is defined and page.seo_title else page.title) %}
+{% set lang = page.lang if page.lang is defined and page.lang else site.lang %}
+{% set cover = page.cover if page.cover is defined and page.cover else none %}
+{% set t = (page.color | theme) if page.color is defined else {} %}
+<html lang="{{ lang }}" data-root="/">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="{{ t.deep or '#08080a' }}">
+  <script>document.documentElement.classList.add("js")</script>
+  {% include "partials/google_head.html" %}
+  <title>{{ head_title }}</title>
+  <meta name="description" content="{{ description | truncate_text(160) }}">
+  <meta name="author" content="{{ site.artist }}">
+  {% if page.noindex is defined and page.noindex %}<meta name="robots" content="noindex">{% else %}<meta name="robots" content="index, follow, max-image-preview:large">{% endif %}
+  {% block head_base %}{% endblock %}
+  {% if site_url and not (page.noindex is defined and page.noindex) %}
+  <link rel="canonical" href="{{ abs_url(canonical) }}">
+  <meta property="og:url" content="{{ abs_url(canonical) }}">
+  <meta property="og:image" content="{{ abs_url(cover or site.og_image) }}">
+  <link rel="alternate" type="application/rss+xml" title="{{ site.artist }}" href="/feed.xml">
+  {% endif %}
+  {% if pager is defined and pager %}
+  {% if pager.prev %}<link rel="prev" href="{{ pager.prev }}">{% endif %}
+  {% if pager.next %}<link rel="next" href="{{ pager.next }}">{% endif %}
+  {% endif %}
+  <meta property="og:type" content="{{ {'album': 'music.album', 'song': 'music.song', 'post': 'article'}.get(page.type, 'website') if is_obj else 'website' }}">
+  <meta property="og:site_name" content="{{ site.name }}">
+  <meta property="og:title" content="{{ og_title }}">
+  <meta property="og:description" content="{{ description | truncate_text(200) }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/assets/fonts/roboto-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/css/fonts.css">
+  <link rel="stylesheet" href="/assets/css/site.css">
+  <script src="/assets/js/site.js" defer></script>
+  {% if jsonld %}<script type="application/ld+json">{{ jsonld }}</script>{% endif %}
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}"{% if t %} style="--accent: {{ t.accent }}; --glow: {{ t.glow }}; --deep: {{ t.deep }};"{% endif %}>
+<a class="skip-link" href="#content">Skip to content</a>
+{% include "partials/header.html" %}
+<main id="content" class="site-main">
+{% block main %}{% endblock %}
+</main>
+{% include "partials/footer.html" %}
+</body>
+</html>

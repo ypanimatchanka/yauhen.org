@@ -1,0 +1,36 @@
+# Categories kept from WordPress, so /category/<path>/ and /category/<path>/page/<n>/ stay the same.
+# A page lists categories by path in its front matter. Empty categories get no page.
+- path: releases
+  name: Releases
+  description: All releases by Yauhen Panimatchanka — albums, EPs, singles and songs with lyrics.
+- path: releases/music
+  name: Music
+  description: Albums, EPs and singles by Yauhen Panimatchanka — instrumental, cinematic and song-based music on all streaming platforms.
+- path: releases/songs
+  name: Songs
+  description: Songs by Yauhen Panimatchanka with full lyrics and the stories behind them — written in several languages.
+- path: releases/produced
+  name: Under Label
+  description: Artists and projects produced by Yauhen Panimatchanka under the YAUHEN.ORG label.
+- path: releases/produced/lullasoono
+  name: LullaSoono
+  description: Lullabies, songs and sound tales by LullaSoono — music and stories from the Moon.
+- path: releases/applications
+  name: Applications
+- path: anthologies
+  name: Anthologies
+  description: Long-form musical cycles by Yauhen Panimatchanka — the Virgin anthology and the Zoodiac musical bestiary.
+- path: blog
+  name: Blog
+  description: Notes and stories by composer Yauhen Panimatchanka about music, the music industry and life.
+- path: blog/life-style
+  name: Life Style
+  description: Life style notes and stories from Yauhen Panimatchanka, composer and music producer.
+- path: blog/music-blog
+  name: Music
+  description: Articles about music and the music industry by composer and producer Yauhen Panimatchanka.
+- path: blog/tech
+  name: Tech
+- path: news
+  name: News
+  description: News from Yauhen Panimatchanka — releases, independent music and the streaming industry.

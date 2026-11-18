@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% import "partials/blocks.html" as b with context %}
+{% block body_class %}archive{% endblock %}
+{% block main %}
+<header class="page-hero">
+  <div class="container page-hero-inner">
+    <div>
+      {{ b.crumbs_nav(crumbs, heading) }}
+      <p class="eyebrow">{{ eyebrow }}{% if pager.total > 1 %} · page {{ pager.n }} of {{ pager.total }}{% endif %}</p>
+      <h1 class="page-title">{{ heading }}</h1>
+      {% if lead %}<p class="release-lead">{{ lead }}</p>{% endif %}
+    </div>
+  </div>
+</header>
+<section class="section container">
+  {% if subcats %}
+  <nav class="chips" aria-label="Sub-categories">
+    {% for s in subcats %}<a class="chip" href="{{ s.url }}">{{ s.name }} <span>{{ s.pages | length }}</span></a>{% endfor %}
+  </nav>
+  {% endif %}
+  {{ b.grid(pager["items"], vt=true) }}
+  {{ b.pagination(pager) }}
+</section>
+{% endblock %}

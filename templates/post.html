@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% import "partials/blocks.html" as b with context %}
+{% block body_class %}article{% endblock %}
+{% block main %}
+<header class="page-hero{% if page.cover %} has-cover{% endif %}">
+  <div class="hero-backdrop" aria-hidden="true">{% if page.cover %}<img src="{{ page.thumbs.get(720) or page.cover }}" alt="">{% endif %}</div>
+  <div class="container page-hero-inner">
+    <div>
+      {{ b.crumbs_nav(crumbs, page.title) }}
+      <p class="eyebrow">{{ page.category_items[0].name if page.category_items else "Blog" }}{% if page.date %} · <time datetime="{{ page.date.isoformat() }}">{{ page.date | date_long }}</time>{% endif %} · {{ page.reading_time }} min read</p>
+      <h1 class="page-title">{{ page.title }}</h1>
+    </div>
+    {% if page.cover %}<div class="page-cover">{{ b.art(page, size="hero", vt=true, eager=true) }}</div>{% endif %}
+  </div>
+</header>
+<div class="container release-body">
+  <article class="prose">{{ page.content }}</article>
+</div>
+<div class="container">{{ b.prev_next(prev_page, next_page, "post") }}</div>
+{% include "partials/tags.html" %}
+{% endblock %}

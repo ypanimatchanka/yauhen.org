@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% import "partials/blocks.html" as b with context %}
+{% block body_class %}release song{% endblock %}
+{% block main %}
+{% set album = page.album_page %}
+<section class="release-hero release-hero-song">
+  <div class="hero-backdrop" aria-hidden="true">{% if page.cover %}<img src="{{ page.thumbs.get(720) or page.cover }}" alt="">{% endif %}</div>
+  <div class="container release-hero-inner">
+    <div class="release-art release-art-small">{{ b.art(page, size="hero", vt=true, eager=true) }}</div>
+    <div class="release-info">
+      {{ b.crumbs_nav(crumbs, page.title) }}
+      <p class="eyebrow">{% if page.track_no %}Track {{ page.track_no }}{% else %}Song{% endif %}{% if album %} · {{ album.title }}{% if album.release and album.release != "Album" %} ({{ album.release }}){% endif %}{% endif %}{% if page.year %} · {{ page.year }}{% endif %}</p>
+      <h1 class="release-title">{{ page.title }}</h1>
+      <p class="release-by">{{ page.artist or site.artist }}</p>
+      <div class="release-actions">
+        {% if '<div class="embed' in page.content %}<button class="btn btn-glow" type="button" data-play>{{ icon("play") }} Play</button>{% endif %}
+        {% if page.lyrics %}<a class="btn btn-ghost" href="#lyrics">{{ icon("mic") }} Lyrics</a>{% endif %}
+        {{ b.listen(page.listen) }}
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container release-body{% if album %} has-aside{% endif %}">
+  <article class="prose" data-cover="{{ page.thumbs.get(720) or page.cover or '' }}">
+    {{ page.content }}
+  </article>
+  {% if album %}
+  <aside class="release-aside">
+    <section class="panel">
+      <a class="album-card" href="{{ album.url }}">
+        <span class="album-card-art">{{ b.art(album) }}</span>
+        <span><small>From the {{ (album.release or "album") | lower }}</small><strong>{{ album.title }}</strong></span>
+      </a>
+      {% if album.track_pages %}
+      <ol class="tracklist">
+        {% for t in album.track_pages %}
+        <li{% if t is sameas page %} aria-current="true"{% endif %}><a href="{{ t.url }}"><span class="tl-n">{{ loop.index }}</span><span class="tl-t">{{ t.title }}</span></a></li>
+        {% endfor %}
+      </ol>
+      {% endif %}
+    </section>
+  </aside>
+  {% endif %}
+</div>
+
+<div class="container">{{ b.prev_next(prev_page, next_page, "track") }}</div>
+{% include "partials/tags.html" %}
+{% endblock %}

@@ -1,0 +1,39 @@
+{% macro nav_link(item, cls) -%}
+  {%- set active = (item.url == url) or (item.url != "/" and url.startswith(item.url)) -%}
+  <a class="{{ cls }}{% if active %} is-active{% endif %}" href="{{ item.url }}"{% if item.url == url %} aria-current="page"{% endif %}>{{ item.title }}</a>
+{%- endmacro %}
+<header class="site-header" data-header>
+  <div class="header-inner">
+    <a class="brand" href="/" aria-label="{{ site.artist }} – home">
+      <span class="brand-mark" aria-hidden="true">YP</span>
+      <span class="brand-name">{{ site.artist }}</span>
+    </a>
+    <nav id="main-nav" class="main-nav" aria-label="Main">
+      <ul class="menu">
+        {% for item in site.menu %}
+        <li class="menu-item{% if item.children %} has-children{% endif %}">
+          {{ nav_link(item, "menu-link") }}
+          {% if item.children %}
+          <button class="submenu-toggle" type="button" aria-expanded="false" aria-label="Open {{ item.title }} menu">{{ icon("caret-down") }}</button>
+          <ul class="submenu">
+            {% for child in item.children %}<li>{{ nav_link(child, "submenu-link") }}</li>{% endfor %}
+          </ul>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      <ul class="nav-social" aria-label="Listen">
+        {% for s in site.social %}
+        <li><a href="{{ s.url }}" target="_blank" rel="noopener" aria-label="{{ s.name }}" title="{{ s.name }}">{{ icon(s.icon) }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn shuffle-btn" type="button" data-shuffle title="Play a random song" aria-label="Random song">{{ icon("shuffle") }}</button>
+      <a class="icon-btn" href="/search/" title="Search songs and lyrics" aria-label="Search">{{ icon("search") }}</a>
+      <button class="icon-btn nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Menu">
+        {{ icon("menu", "icon icon-open") }}{{ icon("close", "icon icon-close") }}
+      </button>
+    </div>
+  </div>
+</header>

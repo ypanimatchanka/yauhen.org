@@ -1,0 +1,24 @@
+# build output
+_site/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+
+# local Claude Code settings
+.claude/settings.local.json
+.claude/.cc-writes/
+
+# temporary build folders (build.py swaps them into _site)
+.*.tmp-*/
+.*.old-*/
+
+# cover thumbnails / colour cache (build.py)
+.cache/
+.audit_site/
