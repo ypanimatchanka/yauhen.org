@@ -31,3 +31,7 @@ Crafting a narrative about Yauhen Panimatchanka is about capturing the essence o
 Yauhen’s story is not just about the accolades or the achievements in isolation. It’s about the integration of these spheres of knowledge, the synthesis of ideas, and the creation of something truly innovative and impactful. His journey inspires not only for its breadth and depth but also for its demonstration of how one can continuously evolve, learn, and contribute to various fields of human endeavor.
 
 Yauhen Panimatchanka embodies the spirit of a true visionary – one who is constantly pushing the boundaries of what is possible, all while maintaining a sense of humility and a desire to contribute positively to the world.
+
+## My logos
+
+My music has its own signs: the YP Soundwave mark and the colour YP monogram. [Read the story behind my logos](/about/logos/).

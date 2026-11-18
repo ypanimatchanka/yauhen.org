@@ -22,11 +22,10 @@
 
 {{ b.title_marquee(page.title) }}
 
-<div class="container release-body{% if page.track_pages or page.anthology_page %} has-aside{% endif %}">
+<div class="container release-body has-aside">
   <article class="prose" data-cover="{{ page.thumbs.get(720) or page.cover or '' }}">
     {{ page.content }}
   </article>
-  {% if page.track_pages or page.anthology_page %}
   <aside class="release-aside">
     {% if page.track_pages %}
     <section class="panel">
@@ -50,8 +49,8 @@
       <a class="panel-more" href="{{ a.url }}">About {{ a.title }} {{ icon("arrow-right") }}</a>
     </section>
     {% endif %}
+    {% include "partials/qr.html" %}
   </aside>
-  {% endif %}
 </div>
 
 {% if page.track_pages %}

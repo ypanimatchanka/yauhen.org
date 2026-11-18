@@ -5,7 +5,7 @@
 <header class="site-header" data-header>
   <div class="header-inner">
     <a class="brand" href="/" aria-label="{{ site.artist }} – home">
-      <span class="brand-mark" aria-hidden="true">YP</span>
+      <img class="brand-logo" src="/assets/img/logo-yp.png" alt="" width="61" height="40">
       <span class="brand-name">{{ site.artist }}</span>
     </a>
     <nav id="main-nav" class="main-nav" aria-label="Main">
@@ -29,7 +29,7 @@
       </ul>
     </nav>
     <div class="header-actions">
-      <button class="icon-btn shuffle-btn" type="button" data-shuffle title="Play a random song" aria-label="Random song">{{ icon("shuffle") }}</button>
+      <button class="icon-btn shuffle-btn" type="button" data-shuffle title="Play a random track" aria-label="Random track">{{ icon("shuffle") }}</button>
       <a class="icon-btn" href="/search/" title="Search songs and lyrics" aria-label="Search">{{ icon("search") }}</a>
       <button class="icon-btn nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Menu">
         {{ icon("menu", "icon icon-open") }}{{ icon("close", "icon icon-close") }}

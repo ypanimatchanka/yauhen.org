@@ -33,7 +33,9 @@
   <meta property="og:title" content="{{ og_title }}">
   <meta property="og:description" content="{{ description | truncate_text(200) }}">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/img/favicon-32.png" sizes="32x32">
+  <link rel="icon" href="/assets/img/favicon-192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
   <link rel="preload" href="/assets/fonts/roboto-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/assets/css/fonts.css">
@@ -49,5 +51,10 @@
 {% block main %}{% endblock %}
 </main>
 {% include "partials/footer.html" %}
+{% if random_pool and random_pool.tracks %}
+{# random-track mini player: built by site.js on demand; paths are relative to the site root #}
+<div id="random-player" hidden data-qr="/assets/img/qr-random-track.png" data-link="{{ random_pool.link }}"></div>
+<script type="application/json" id="random-pool">{{ random_pool.tracks | tojson }}</script>
+{% endif %}
 </body>
 </html>

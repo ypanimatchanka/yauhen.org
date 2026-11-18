@@ -456,7 +456,33 @@ class Site:
             "categories": self.categories,
             "page_by_url": self.by_url,
             "shuffle": [s.url for s in songs] + [a.url for a in albums if not a.track_pages],
+            "random_pool": self.random_pool(),
         }
+
+    def random_pool(self) -> dict:
+        """Tracks of the random-track mini player (data/random-tracks.yaml), linked to their pages when possible."""
+        f = DATA / "random-tracks.yaml"
+        if not f.exists():
+            return {}
+        data = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+        norm = lambda s: re.sub(r"\s+", " ", re.sub(r"\[.*?\]|\(.*?\)", "", unicodedata.normalize("NFC", str(s))).split(" - ")[0]).strip().lower()
+        music = [p for p in self.pages if p.type in ("song", "album")]
+        by_video = {}
+        for p in music:
+            blob = p.body_md + " ".join(l.get("url", "") for l in p.listen)
+            for vid in re.findall(r"(?:v=|youtu\.be/|/embed/|data-id=\")([\w-]{11})", blob):
+                by_video.setdefault(vid, p)
+        tracks = []
+        for t in data.get("tracks") or []:
+            if not t.get("title"):        # YouTube gave no title: usually the video can't be embedded
+                continue
+            name = norm(t.get("title", ""))
+            page = by_video.get(t["id"]) or next((p for p in music if norm(p.title) == name), None) or \
+                next((p for p in music if p.type == "song" and name and re.search(rf"\b{re.escape(name)}\b", p.title.lower())), None)
+            tracks.append({"id": t["id"], "title": t.get("title") or "Random track",
+                           "page": urllib.parse.unquote(page.url.lstrip("/")) if page else "",
+                           "cover": urllib.parse.unquote((page.thumbs.get(360) or "").lstrip("/")) if page else ""})
+        return {"link": data.get("link", ""), "tracks": tracks}
 
     # ---- breadcrumbs and labels
 
@@ -758,6 +784,13 @@ class Site:
         elif not is_page or page.type not in ("home",):
             graph.append({"@type": "CollectionPage" if not is_page else "WebPage", "url": A(url),
                           "name": ctx.get("heading") or (page.title if is_page else (page or {}).get("title"))})
+        if is_page and page.meta.get("images_ld"):   # original artwork / logos: who made them and who holds the rights
+            for img in page.meta["images_ld"]:
+                graph.append({"@type": "ImageObject", "contentUrl": A(img["src"]), "url": A(img["src"]), "name": img.get("name"),
+                              "creator": {"@type": "Person", "name": cfg.get("artist"), "@id": person_id},
+                              "copyrightHolder": {"@type": "Person", "name": cfg.get("artist")},
+                              "creditText": cfg.get("artist"), "acquireLicensePage": A(page.url),
+                              "copyrightNotice": f"© {cfg.get('artist')}. All rights reserved."})
         data = json.dumps({"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False)
         return Markup(data.replace("</", "<\\/"))
 

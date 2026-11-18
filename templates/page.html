@@ -2,7 +2,7 @@
 {% import "partials/blocks.html" as b with context %}
 {% block body_class %}page{% endblock %}
 {% block main %}
-<header class="page-hero{% if page.cover %} has-cover{% endif %}">
+<header class="page-hero{% if page.cover and page.meta.get("hero_cover", true) %} has-cover{% endif %}">
   <div class="hero-backdrop" aria-hidden="true">{% if page.cover %}<img src="{{ page.thumbs.get(720) or page.cover }}" alt="">{% endif %}</div>
   <div class="container page-hero-inner">
     <div>
@@ -11,7 +11,7 @@
       <h1 class="page-title">{{ page.title }}</h1>
       {% if page.meta.get("tagline") %}<p class="release-lead">{{ page.meta.tagline }}</p>{% endif %}
     </div>
-    {% if page.cover %}<div class="page-cover page-cover-wide">{{ b.art(page, size="hero", eager=true) }}</div>{% endif %}
+    {% if page.cover and page.meta.get("hero_cover", true) %}<div class="page-cover page-cover-wide">{{ b.art(page, size="hero", eager=true) }}</div>{% endif %}
   </div>
 </header>
 <div class="container release-body">

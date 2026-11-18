@@ -1,0 +1,12 @@
+{% if random_pool and random_pool.link %}
+<section class="panel qr-panel">
+  <h2 class="panel-title">{{ icon("shuffle") }} Random journey</h2>
+  <img class="qr-code" src="/assets/img/qr-random-track.png" alt="QR code that opens a random song by {{ site.artist }}" width="150" height="150" loading="lazy">
+  <p class="qr-text"><strong>Scan for a random journey through sound</strong></p>
+  <p class="muted qr-note">It’s safe: the code only opens one of my songs on streaming platforms.</p>
+  <div class="qr-actions">
+    <button class="btn btn-glow" type="button" data-shuffle>{{ icon("play") }} Play one here</button>
+    <a class="qr-link" href="{{ random_pool.link }}" target="_blank" rel="noopener">{{ random_pool.link | replace("https://", "") }}</a>
+  </div>
+</section>
+{% endif %}

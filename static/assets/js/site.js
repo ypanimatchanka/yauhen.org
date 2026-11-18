@@ -141,9 +141,70 @@
     });
   });
 
-  // ---- shuffle: open a random song (list comes from the search index)
+  // ---- random-track mini player: plays a random YouTube track from the o0o.app pool (data/random-tracks.yaml)
+  var poolEl = doc.getElementById("random-pool"), host = doc.getElementById("random-player");
+  var pool = [];
+  try { pool = poolEl ? JSON.parse(poolEl.textContent) : []; } catch (e) { pool = []; }
+  var lastId = null, player = null;
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; });
+  }
+  function buildPlayer() {
+    var qr = new URL(host.dataset.qr, location.href).href, link = host.dataset.link;
+    host.className = "rp";
+    host.setAttribute("role", "region");
+    host.setAttribute("aria-label", "Random track player");
+    host.innerHTML =
+      '<div class="rp-head"><span class="rp-art"></span><div class="rp-meta"><small>Random track</small><strong class="rp-title"></strong></div>' +
+      '<button class="rp-x" type="button" aria-label="Close player">×</button></div>' +
+      '<div class="rp-video"></div>' +
+      '<div class="rp-actions">' +
+      '<button class="rp-btn rp-next" type="button">↻ Another one</button>' +
+      '<a class="rp-btn rp-page" href="#">Story &amp; lyrics</a>' +
+      '<a class="rp-btn rp-yt" href="#" target="_blank" rel="noopener">YouTube ↗</a>' +
+      '<button class="rp-btn rp-qr-toggle" type="button" aria-expanded="false">On your phone</button></div>' +
+      '<div class="rp-qr" hidden><img src="' + esc(qr) + '" alt="QR code: a random song" width="120" height="120">' +
+      '<p>Scan for a random journey through sound — or open <a href="' + esc(link) + '" target="_blank" rel="noopener">' +
+      esc(link.replace(/^https?:\/\//, "")) + "</a>. It’s safe: it only opens one of my songs.</p></div>";
+    host.querySelector(".rp-x").addEventListener("click", closePlayer);
+    host.querySelector(".rp-next").addEventListener("click", function () { playRandom(); });
+    var t = host.querySelector(".rp-qr-toggle");
+    t.addEventListener("click", function () {
+      var box = host.querySelector(".rp-qr"), open = box.hidden;
+      box.hidden = !open;
+      t.setAttribute("aria-expanded", String(open));
+    });
+    doc.addEventListener("keydown", function (e) { if (e.key === "Escape" && !host.hidden) closePlayer(); });
+    player = host;
+  }
+  function playRandom() {
+    if (!player) buildPlayer();
+    var choices = pool.filter(function (t) { return t.id !== lastId; });
+    var t = choices[Math.floor(Math.random() * choices.length)] || pool[0];
+    lastId = t.id;
+    player.querySelector(".rp-title").textContent = t.title;
+    var art = player.querySelector(".rp-art");
+    art.innerHTML = t.cover ? '<img src="' + esc(new URL(t.cover, siteRoot).href) + '" alt="">' : "♪";
+    var page = player.querySelector(".rp-page");
+    page.hidden = !t.page;
+    if (t.page) page.href = new URL(t.page, siteRoot).href;
+    player.querySelector(".rp-yt").href = "https://www.youtube.com/watch?v=" + t.id;
+    player.querySelector(".rp-video").innerHTML =
+      '<iframe src="https://www.youtube-nocookie.com/embed/' + encodeURIComponent(t.id) +
+      '?autoplay=1&rel=0&playsinline=1" title="' + esc(t.title) + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+    player.hidden = false;
+    requestAnimationFrame(function () { player.classList.add("is-open"); });
+  }
+  function closePlayer() {
+    player.classList.remove("is-open");
+    player.querySelector(".rp-video").innerHTML = "";   // stops the music
+    setTimeout(function () { player.hidden = true; }, 250);
+  }
+
+  // ---- shuffle: random YouTube track in the mini player; without a pool, open a random song page
   var shuffleList = null;
   function shuffle() {
+    if (pool.length && host) return playRandom();
     var go = function (list) {
       var here = location.href, pick, tries = 0;
       do { pick = list[Math.floor(Math.random() * list.length)]; tries++; }

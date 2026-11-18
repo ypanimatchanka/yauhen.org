@@ -28,6 +28,11 @@ menu:
     url: /
   - title: About
     url: /about/
+    children:
+      - title: About me
+        url: /about/
+      - title: My logos
+        url: /about/logos/
   - title: Music
     url: /music/
   - title: Songs & Lyrics
@@ -69,10 +74,9 @@ social:
   - name: LinkedIn
     url: https://www.linkedin.com/in/yauhen-panimatchanka/
     icon: linkedin
-  # Instagram existed on the old site without a link; add it here:
-  # - name: Instagram
-  #   url: https://www.instagram.com/<profile>/
-  #   icon: instagram
+  - name: Instagram
+    url: https://www.instagram.com/panimatchanka/
+    icon: instagram
 
 # Labels and icons for "listen" buttons (front matter: listen: [{platform, url}])
 platforms:
